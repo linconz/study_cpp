@@ -40,6 +40,11 @@ public:
      打印链表
      */
     void outputList();
+    
+    /**
+     查找节点
+     */
+    Node *findNode(int position);
 
     /**
      翻转链表
@@ -109,7 +114,6 @@ void List::deleteNode(int position)
     findNode = head;
     if (findNode->position == position) {
         // 如果findNode第一个节点就是要查找的位置
-        delete findNode;
         head = NULL;
         return;
     }
@@ -123,6 +127,22 @@ void List::deleteNode(int position)
         // (node - 1)->next = node->next
         prevFindNode->next = findNode->next;
     }
+}
+
+Node* List::findNode(int position)
+{
+	Node *findNode = NULL;
+	if (head == NULL) {
+		return NULL;
+	}
+	findNode = head;
+	while (findNode->position != position && findNode->next != NULL) {
+		findNode = findNode->next;
+	}
+	if (findNode->position == position) {
+		return findNode;
+	}
+	return NULL;
 }
 
 void List::reverseList()
@@ -186,5 +206,9 @@ int main(int argc, const char * argv[]) {
     list->outputList();
     list->reverseList();
     list->outputList();
+    Node *findNode = list->findNode(3);
+    if (findNode != NULL) {
+    	cout << "find node:" << findNode->position << endl;
+    }
     return 0;
 }
