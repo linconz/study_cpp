@@ -51,6 +51,11 @@ public:
      */
     void reverseList();
 
+    /**
+     清空链表
+     */
+    void clearList();
+
     Node *getHead() {return head;};
 };
 
@@ -131,18 +136,18 @@ void List::deleteNode(int position)
 
 Node* List::findNode(int position)
 {
-	Node *findNode = NULL;
-	if (head == NULL) {
-		return NULL;
-	}
-	findNode = head;
-	while (findNode->position != position && findNode->next != NULL) {
-		findNode = findNode->next;
-	}
-	if (findNode->position == position) {
-		return findNode;
-	}
-	return NULL;
+    Node *findNode = NULL;
+    if (head == NULL) {
+        return NULL;
+    }
+    findNode = head;
+    while (findNode->position != position && findNode->next != NULL) {
+        findNode = findNode->next;
+    }
+    if (findNode->position == position) {
+        return findNode;
+    }
+    return NULL;
 }
 
 void List::reverseList()
@@ -170,6 +175,18 @@ void List::reverseList()
     currentNode->next = head;
     head->next = NULL;
     head = nextNode;
+}
+
+void List::clearList()
+{
+    Node *currentNode, *nextNode;
+    currentNode = head->next;
+    while (currentNode != NULL) {
+        nextNode = currentNode->next;
+        free(currentNode);
+        currentNode = nextNode;
+    }
+//    free(head);
 }
 
 void List::outputList()
@@ -210,5 +227,8 @@ int main(int argc, const char * argv[]) {
     if (findNode != NULL) {
     	cout << "find node:" << findNode->position << endl;
     }
+    cout << "clear list" << endl;
+    list->clearList();
+    list->outputList();
     return 0;
 }
