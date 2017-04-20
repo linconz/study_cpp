@@ -1,8 +1,8 @@
 //
-//  main.cpp
+//  linked_list.cpp
 //  TestCPP
 //
-//  Created by letv on 2017/1/16.
+//  Created by zhang on 2017/1/16.
 //  Copyright © 2017年 zhang. All rights reserved.
 //
 
@@ -12,39 +12,55 @@ using namespace std;
 
 struct Node
 {
-    int position;
+    int value;
     Node *next;
 };
 
 class List {
-    Node *head;
 public:
+    Node *head;
     List() { head = NULL; };
 
     /**
-     在指定位置之前插入节点
+     在链表的最后增加结点
 
-     @param oldPosition 原节点
-     @param newPosition 节点内容
+     @param value 结点value
      */
-    void insertNode(int oldPosition, int newPosition);
+    void addNode(int value);
 
     /**
-     删除节点
+     在指定结点之前插入结点
 
-     @param position position
+     @param oldValue 原结点
+     @param newValue 结点内容
      */
-    void deleteNode(int position);
+    void insertNode(int oldValue, int newValue);
+
+    /**
+     删除结点
+
+     @param value 结点value
+     */
+    void deleteNode(int value);
 
     /**
      打印链表
      */
     void outputList();
-    
+
     /**
-     查找节点
+     查找结点
      */
-    Node *findNode(int position);
+    Node *findNode(int value);
+
+    /**
+     查找结点位于链表中的位置
+
+     @param value 结点value
+
+     @return 第一次出现位置
+     */
+    int findNodePosition(int value);
 
     /**
      翻转链表
@@ -52,54 +68,87 @@ public:
     void reverseList();
 
     /**
+     相邻两个位置翻转
+     */
+    void inreverseList();
+
+    /**
      清空链表
      */
     void clearList();
 
+    /**
+     销毁链表
+     */
+    void destoryList();
+
+    /**
+     判断是否有环
+
+     @return 链表是否有环: -1 无环
+     */
+    int hasLoop();
+
     Node *getHead() {return head;};
 };
 
-void List::insertNode(int oldPosition, int newPosition)
+void List::addNode(int value)
 {
-    // 查找oldPosition的节点
+    if (head == NULL) {
+        head = (Node *)new(Node);
+        head->value = value;
+        head->next = NULL;
+        return;
+    }
+    Node *findNode = head;
+    while (findNode->next != NULL) {
+        findNode = findNode->next;
+    }
+    Node *newNode = (Node *)new(Node);
+    newNode->value = value;
+    newNode->next = NULL;
+    findNode->next = newNode;
+}
+
+void List::insertNode(int oldValue, int newValue)
+{
+    // 查找oldPosition的结点
     Node *findNode;
-    // 存储findNode的上一个节点
+    // 存储findNode的上一个结点
     Node *prevFindNode = NULL;
-    // 要插入的节点
+    // 要插入的结点
     Node *newNode;
     newNode = (Node*)new(Node);
-    newNode->position = newPosition;
+    newNode->value = newValue;
     findNode = head;
     if (findNode == NULL) {
         // 如果是一个新表, next设为空
         head = newNode;
         newNode->next = NULL;
-    } else if (findNode->position == oldPosition) {
-        // 如果第一个节点就是要插入的节点
+    } else if (findNode->value == oldValue) {
+        // 如果第一个结点就是要插入的结点
         // head改为newNode
         head = newNode;
-        // next指向原先的第一个节点
+        // next指向原先的第一个结点
         newNode->next = findNode;
-        // 原先的第一个节点的next设为空
-        findNode->next = NULL;
     } else {
-        // 查找节点oldPosition
-        while (findNode->position != oldPosition && findNode->next != NULL) {
+        // 查找结点oldPosition
+        while (findNode->value != oldValue && findNode->next != NULL) {
             prevFindNode = findNode->next;
             findNode = prevFindNode->next;
             if (findNode == NULL) {
                 break;
             }
         }
-        if (findNode != NULL && findNode->position == oldPosition) {
-            // 找到节点oldPosition
+        if (findNode != NULL && findNode->value == oldValue) {
+            // 找到结点oldPosition
             if (prevFindNode != NULL) {
                 // 更改prevFindNode->next
                 prevFindNode->next = newNode;
             }
             newNode->next = findNode;
         } else if (findNode != NULL) {
-            // 找不到节点, 在最后插入
+            // 找不到结点, 在最后插入
             findNode->next = newNode;
             newNode->next = NULL;
         } else {
@@ -109,7 +158,7 @@ void List::insertNode(int oldPosition, int newPosition)
     }
 }
 
-void List::deleteNode(int position)
+void List::deleteNode(int value)
 {
     if (head == NULL) {
         return;
@@ -117,55 +166,76 @@ void List::deleteNode(int position)
     Node *findNode = NULL;
     Node *prevFindNode = NULL;
     findNode = head;
-    if (findNode->position == position) {
-        // 如果findNode第一个节点就是要查找的位置
+    if (findNode->value == value) {
+        // 如果findNode第一个结点就是要查找的位置
         head = NULL;
         return;
     }
 
-    while (findNode->position != position && findNode->next != NULL) {
+    while (findNode->value != value && findNode->next != NULL) {
         prevFindNode = findNode;
         findNode = findNode->next;
     }
-    if (findNode->position == position) {
-        // 把找到节点位置的上一个节点指向找到节点位置的下一个节点
+    if (findNode->value == value) {
+        // 把找到结点位置的上一个结点指向找到结点位置的下一个结点
         // (node - 1)->next = node->next
         prevFindNode->next = findNode->next;
     }
 }
 
-Node* List::findNode(int position)
+Node* List::findNode(int value)
 {
     Node *findNode = NULL;
     if (head == NULL) {
         return NULL;
     }
     findNode = head;
-    while (findNode->position != position && findNode->next != NULL) {
+    while (findNode->value != value && findNode->next != NULL) {
         findNode = findNode->next;
     }
-    if (findNode->position == position) {
+    if (findNode->value == value) {
         return findNode;
     }
     return NULL;
 }
 
+int List::findNodePosition(int value)
+{
+    if (head == NULL) {
+        return -1;
+    }
+    if (head->value == value) {
+        return 0;
+    }
+    Node *findNode = NULL;
+    findNode = head;
+    int temp = 0;
+    while(findNode != NULL && findNode->value != value) {
+        findNode = findNode->next;
+        temp += 1;
+    }
+    if (temp == 0) {
+        return -1;
+    }
+    return temp + 1;
+}
+
 void List::reverseList()
 {
-    Node *currentNode = NULL, *nextNode = NULL;
+    Node *currentNode, *nextNode = NULL;
     if (head == NULL) {
         return;
     }
-    // 找到head的下一个节点
-    // 存入当前指向的节点
+    // 找到head的下一个结点
+    // 存入当前指向的结点
     currentNode = head->next;
     while (currentNode != NULL && currentNode->next != NULL) {
-        // 找到当前节点指向的下一个节点存入nextNode
+        // 找到当前结点指向的下一个结点存入nextNode
         nextNode = currentNode->next;
-        // 更改当前节点的下一个指向
+        // 更改当前结点的下一个指向
         // 指向到 node + 2
         currentNode->next = nextNode->next;
-        // 更改nextNode的指向为当前节点
+        // 更改nextNode的指向为当前结点
         nextNode->next = head->next;
         // 把head指向nextNode
         head->next = nextNode;
@@ -177,23 +247,108 @@ void List::reverseList()
     head = nextNode;
 }
 
+void List::inreverseList()
+{
+    if (head == NULL || head->next == NULL) {
+        return;
+    }
+
+    Node *prevNode = NULL, *currentNode = head, *nextNode = NULL;
+    while (currentNode != NULL && currentNode->next != NULL) {
+        if (prevNode != NULL) {
+            // 不是第一次进入的, 更新prev的指向为当前结点的下一个结点
+            prevNode->next = currentNode->next;
+        } else {
+            // 第一次进入, 更新head的指向到当前结点的指向
+            head = currentNode->next;
+        }
+        // 把当前结点赋值给prev
+        prevNode = currentNode;
+        // 把当前结点的+2位置的结点赋值给next
+        nextNode = currentNode->next->next;
+        // 把当前结点转移到node + 2
+        currentNode->next->next = currentNode;
+        // 把当前结点的下一个指向更新为更改前的next
+        currentNode->next = nextNode;
+        // 重新赋值currentNode, 从node + 2位置开始
+        currentNode = nextNode;
+    }
+}
+
 void List::clearList()
 {
+    if (head == NULL) {
+        return;
+    }
+
     Node *currentNode, *nextNode;
     currentNode = head->next;
     while (currentNode != NULL) {
         nextNode = currentNode->next;
-        free(currentNode);
+        delete currentNode;
         currentNode = nextNode;
     }
-//    free(head);
+    head->next = NULL;
+}
+
+void List::destoryList()
+{
+    if (head == NULL) {
+        return;
+    }
+
+    Node *nextNode;
+    while (head != NULL) {
+        nextNode = head->next;
+        delete head;
+        head = nextNode;
+    }
+}
+
+int List::hasLoop()
+{
+    // 思路: 声明两个步数
+    Node *currentNode = head;
+    // 第一个用来记录外层递归次数
+    int currentStep = 0;
+    while (currentNode != NULL && currentNode->next != NULL) {
+        Node *currentNode2 = head;
+        // 第二个用来记录内层递归次数
+        int currentStep2 = 0;
+        currentStep ++;
+        while (currentNode2 != NULL && currentNode2->next != NULL) {
+            currentStep2 ++;
+            if (currentNode2 == currentNode) {
+                if (currentStep == currentStep2) {
+                    break;
+                } else {
+                    // 如果当前两个结点相同
+                    // 同时步数不同, 说明遇到了链表环
+                    // 链表:          0 -> 1 -> 2 -> 3 -> 2 -> 3 ...
+                    // 第一层步数:     1    2    3    4    5 第二层已经到了环
+                    // 第二层步数:     5    5    5    5    3 第二层因为从0又开始计数,这时候步数是3
+                    return currentStep2;
+                }
+            }
+            currentNode2 = currentNode2->next;
+        }
+        currentNode = currentNode->next;
+    }
+    return -1;
 }
 
 void List::outputList()
 {
+    if (head == NULL) {
+        cout << "list is NULL" << endl;
+        return;
+    } else if (head->next == NULL) {
+        cout << "list is empty" << endl;
+        return;
+    }
     Node *currentNode = head;
     while(currentNode != NULL) {
-        cout << currentNode->position;
+        cout << currentNode->value;
         currentNode = currentNode->next;
         if (currentNode != NULL) {
             cout << " -> ";
@@ -206,29 +361,64 @@ void List::outputList()
 int main(int argc, const char * argv[]) {
 
     List *list = new List();
-    for (int i=0; i<5; i++) {
-        list->insertNode(1, i);
+    for (int i=0; i<4; i++) {
+        list->addNode(i);
     }
     list->outputList();
+    
     cout << "--------------" << endl;
     cout << "insert 666:" << endl;
     list->insertNode(2, 666);
     list->outputList();
+
     cout << "--------------" << endl;
     cout << "delete 666:" << endl;
     list->deleteNode(666);
     list->outputList();
+
     cout << "--------------" << endl;
     cout << "reverse:" << endl;
     list->outputList();
     list->reverseList();
     list->outputList();
+
+    cout << "--------------" << endl;
+    cout << "inreverse:" << endl;
+    list->outputList();
+    list->inreverseList();
+    list->outputList();
+
+    list->insertNode(3, 233);
+    int position = list->findNodePosition(233);
+    if (position == -1) {
+        cout << "找不到233" << endl;
+    } else {
+        cout << "找到233, 位置在: " << position << endl;
+        list->outputList();
+    }
     Node *findNode = list->findNode(3);
     if (findNode != NULL) {
-    	cout << "find node:" << findNode->position << endl;
+        cout << "find node:" << findNode->value << endl;
     }
+
+    cout << "insert loop" << endl;
+    Node *temp = list->findNode(3);
+    temp->next = list->findNode(2);
+    cout << temp << endl;
+
+    bool hasLoop = list->hasLoop();
+    if (hasLoop) {
+        cout << "has loop" << endl;
+    }
+
+/*
     cout << "clear list" << endl;
     list->clearList();
     list->outputList();
+
+    cout << "destory list" << endl;
+    list->destoryList();
+    list->outputList();
+*/
     return 0;
 }
