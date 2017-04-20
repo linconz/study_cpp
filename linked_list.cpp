@@ -327,7 +327,7 @@ int List::hasLoop()
                     // 链表:          0 -> 1 -> 2 -> 3 -> 2 -> 3 ...
                     // 第一层步数:     1    2    3    4    5 第二层已经到了环
                     // 第二层步数:     5    5    5    5    3 第二层因为从0又开始计数,这时候步数是3
-                    return currentStep2;
+                    return currentStep2 + 1;
                 }
             }
             currentNode2 = currentNode2->next;
@@ -361,7 +361,7 @@ void List::outputList()
 int main(int argc, const char * argv[]) {
 
     List *list = new List();
-    for (int i=0; i<4; i++) {
+    for (int i=0; i<5; i++) {
         list->addNode(i);
     }
     list->outputList();
@@ -406,9 +406,9 @@ int main(int argc, const char * argv[]) {
     temp->next = list->findNode(2);
     cout << temp << endl;
 
-    bool hasLoop = list->hasLoop();
-    if (hasLoop) {
-        cout << "has loop" << endl;
+    int loopPos = list->hasLoop();
+    if (loopPos > -1) {
+        cout << "has loop, loop position is: " << loopPos << endl;
     }
 /*
     cout << "clear list" << endl;
