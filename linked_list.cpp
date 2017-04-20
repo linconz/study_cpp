@@ -365,7 +365,7 @@ int main(int argc, const char * argv[]) {
         list->addNode(i);
     }
     list->outputList();
-    
+
     cout << "--------------" << endl;
     cout << "insert 666:" << endl;
     list->insertNode(2, 666);
@@ -410,7 +410,6 @@ int main(int argc, const char * argv[]) {
     if (hasLoop) {
         cout << "has loop" << endl;
     }
-
 /*
     cout << "clear list" << endl;
     list->clearList();
