@@ -60,20 +60,6 @@ public:
     void routputListWithStack();
 
     /**
-     查找结点
-     */
-    Node *findNode(int value);
-
-    /**
-     查找结点位于链表中的位置
-
-     @param value 结点value
-
-     @return 第一次出现位置
-     */
-    int findNodePosition(int value);
-
-    /**
      翻转链表
      */
     void reverseList();
@@ -107,7 +93,66 @@ public:
      */
     int count();
 
+    /**
+     查找结点位于链表中的位置
+
+     @param value 结点value
+
+     @return 第一次出现位置
+     */
+    int findNodePosition(int value);
+
+    /**
+     查找结点
+     */
+    Node *findNode(int value);
+
+    /**
+     使用while的方式返回倒数的某个结点
+
+     @param position 位置
+
+     @return Node结点
+     */
+    Node *findPositionAtBackward(unsigned int position);
+
+    /**
+     使用两个指针的方式返回倒数的某个结点
+
+     @param position 位置
+
+     @return Node结点
+     */
+    Node *findPositionAtBackwardWithPoint(unsigned int position);
+
+    /**
+     获得链表中间的结点
+
+     @return Node结点
+     */
+    Node *findMiddleNode();
+
     Node *getHead() {return head;};
+
+    /**
+     合并两个有序链表
+
+     @param list1 链表1
+     @param list2 链表2
+
+     @return 返回合并后的链表
+     */
+    Node* mergeList(Node *list1, Node *list2);
+
+    /**
+     使用两个指针方式合并两个有序链表
+
+     @param list1 链表1
+     @param list2 链表2
+
+     @return 返回合并后的链表
+     */
+    Node* mergeListWithPoint(Node *list1, Node *list2);
 };
 
 void List::addNode(int value)
@@ -184,9 +229,14 @@ void List::deleteNode(int value)
     Node *findNode = NULL;
     Node *prevFindNode = NULL;
     findNode = head;
-    if (findNode->value == value) {
+    if (head->value == value) {
         // 如果findNode第一个结点就是要查找的位置
-        head = NULL;
+        // 判断next是不是空的
+        if (head->next != NULL) {
+            Node *temp = head->next;
+            delete head;
+            head = temp;
+        }
         return;
     }
 
@@ -198,44 +248,8 @@ void List::deleteNode(int value)
         // 把找到结点位置的上一个结点指向找到结点位置的下一个结点
         // (node - 1)->next = node->next
         prevFindNode->next = findNode->next;
+        delete findNode;
     }
-}
-
-Node* List::findNode(int value)
-{
-    Node *findNode = NULL;
-    if (head == NULL) {
-        return NULL;
-    }
-    findNode = head;
-    while (findNode->value != value && findNode->next != NULL) {
-        findNode = findNode->next;
-    }
-    if (findNode->value == value) {
-        return findNode;
-    }
-    return NULL;
-}
-
-int List::findNodePosition(int value)
-{
-    if (head == NULL) {
-        return -1;
-    }
-    if (head->value == value) {
-        return 0;
-    }
-    Node *findNode = NULL;
-    findNode = head;
-    int temp = 0;
-    while(findNode != NULL && findNode->value != value) {
-        findNode = findNode->next;
-        temp += 1;
-    }
-    if (temp == 0) {
-        return -1;
-    }
-    return temp + 1;
 }
 
 void List::reverseList()
@@ -409,6 +423,107 @@ void List::routputListWithStack()
     }
 }
 
+int List::findNodePosition(int value)
+{
+    if (head == NULL) {
+        return -1;
+    }
+    if (head->value == value) {
+        return 0;
+    }
+    Node *findNode = NULL;
+    findNode = head;
+    int temp = 0;
+    while(findNode != NULL && findNode->value != value) {
+        findNode = findNode->next;
+        temp += 1;
+    }
+    if (temp == 0) {
+        return -1;
+    }
+    return temp + 1;
+}
+
+Node* List::findNode(int value)
+{
+    Node *findNode = NULL;
+    if (head == NULL) {
+        return NULL;
+    }
+    findNode = head;
+    while (findNode->value != value && findNode->next != NULL) {
+        findNode = findNode->next;
+    }
+    if (findNode->value == value) {
+        return findNode;
+    }
+    return NULL;
+}
+
+Node* List::findPositionAtBackward(unsigned int position)
+{
+    if (head == NULL || head->next == NULL) {
+        return NULL;
+    }
+    // 循环查找:
+    // 位置 = 链表总数 - 查找位置
+    unsigned int findPosition = this->count() - position;
+    unsigned int tempPosition = 1;
+    Node *findNode = head;
+    while (tempPosition < findPosition) {
+        findNode = findNode->next;
+        tempPosition ++;
+    }
+    return findNode;
+}
+
+Node* List::findPositionAtBackwardWithPoint(unsigned int position)
+{
+    // 使用两个指针，先让前面的指针走到正向第position个结点
+    // 这样前后两个指针的距离差是position-1，之后前后两个指针一起向前走
+    // 前面的指针走到最后一个结点时，后面指针所指结点就是倒数第position个结点。
+    if (position == 0 || head == NULL) {
+        return NULL;
+    }
+    Node *aheadNode = head;
+    Node *behindNode = head;
+    // aheadNode先走到position的位置
+    while (position > 1 && aheadNode != NULL) {
+        aheadNode = aheadNode->next;
+        position --;
+    }
+    if (position > 1 || aheadNode == NULL) {
+        return NULL;
+    }
+    // 两个一起走
+    // 当aheadNode走到末尾, behindNode就是position的位置
+    while (aheadNode->next != NULL) {
+        behindNode = behindNode->next;
+        aheadNode = aheadNode->next;
+    }
+    return behindNode;
+}
+
+Node* List::findMiddleNode()
+{
+    // 获取单链表中间结点，若链表长度为n(n>0)，则返回第n/2+1个结点
+    // 两个指针同时向前走，前面的指针每次走两步
+    // 后面的指针每次走一步，前面的指针走到最后一个结点时，后面的指针所指结点就是中间结点
+    if (head == NULL || head->next == NULL) {
+        return NULL;
+    }
+    Node *aheadNode = head;
+    Node *behindNode = head;
+    while (aheadNode->next != NULL) {
+        aheadNode = aheadNode->next;
+        behindNode = behindNode->next;
+        if (aheadNode->next != NULL) {
+            aheadNode = aheadNode->next;
+        }
+    }
+    return behindNode;
+}
+
 int List::count()
 {
     if (head == NULL) {
@@ -425,6 +540,71 @@ int List::count()
     }
     return temp;
 }
+
+Node* List::mergeList(Node *list1, Node *list2)
+{
+    if (list1 == NULL) {
+        return list2;
+    }
+    if (list2 == NULL) {
+        return list1;
+    }
+    Node *newNode = NULL;
+    // 对两个value做比较
+    // 值小的在前
+    if (list1->value < list2->value) {
+        newNode = list1;
+        // 赋值后下一次的递归用next传递
+        newNode->next = mergeList(list1->next, list2);
+    } else {
+        newNode = list2;
+        newNode->next = mergeList(list1, list2->next);
+    }
+    return newNode;
+}
+
+Node* List::mergeListWithPoint(Node *list1, Node *list2)
+{
+    if (list1 == NULL) {
+        return list2;
+    }
+    if (list2 == NULL) {
+        return list1;
+    }
+    // 定义一个标尺链表
+    Node *newList = NULL;
+    // 第一步先比较两个链表的首位
+    if (list1->value < list2->value) {
+        newList = list1;
+        list1 = list1->next;
+    } else {
+        newList = list2;
+        list2 = list2->next;
+    }
+    // 存储新链表的head
+    Node *newListHead = newList;
+    while (list1 != NULL && list2 != NULL) {
+        if (list1->value < list2->value) {
+            newList->next = list1;
+            list1 = list1->next;
+        } else {
+            newList->next = list2;
+            list2 = list2->next;
+        }
+        // 把标尺往下移动
+        newList = newList->next;
+    }
+    // 如果某个链表还没有走完, 继续赋值
+    if (list1 != NULL) {
+        newList->next = list1;
+    } else if (list2 != NULL) {
+        newList->next = list2;
+    }
+    // 最后得到合并后的链表
+    return newListHead;
+}
+
+void mergeLinkedLists();
 
 int main(int argc, const char * argv[]) {
 
@@ -488,6 +668,27 @@ int main(int argc, const char * argv[]) {
     cout << "reverse output list:" << endl;
     list->routputList(list->head);
 
+//    list->deleteNode(233);
+    cout << "find backward position" << endl;
+    list->outputList();
+    int findPosition = 5;
+    findNode = list->findPositionAtBackward(findPosition);
+    if (findNode != NULL) {
+        cout << "find Node value is:" << findNode->value << endl;
+    } else {
+        cout << "can not find position " << findPosition << endl;
+    }
+
+    list->insertNode(233, 666);
+    list->outputList();
+    cout << "find middle node:";
+    findNode = list->findMiddleNode();
+    if (findNode) {
+        cout << findNode->value << endl;
+    } else {
+        cout << "can not find middle node" << endl;
+    }
+
     cout << "clear list" << endl;
     list->clearList();
     list->outputList();
@@ -495,5 +696,53 @@ int main(int argc, const char * argv[]) {
     cout << "destory list" << endl;
     list->destoryList();
     list->outputList();
+
+    mergeLinkedLists();
     return 0;
+}
+
+/**
+ 合并两个有序链表
+ */
+void mergeLinkedLists()
+{
+    List *list1 = new List();
+    Node *node1 = new(Node);
+    node1->value = 1;
+    Node *node3 = new(Node);
+    node3->value = 3;
+    node1->next = node3;
+    Node *node5 = new(Node);
+    node5->value = 5;
+    node3->next = node5;
+    node5->next = NULL;
+
+    List *list2 = new List();
+    Node *node2 = new(Node);
+    node2->value = 2;
+    Node *node4 = new(Node);
+    node4->value = 4;
+    node2->next = node4;
+    Node *node6 = new(Node);
+    node6->value = 6;
+    node4->next = node6;
+    node6->next = NULL;
+
+    list1->head = node1;
+    list2->head = node2;
+
+    cout << "list 1 is: " << endl;
+    list1->outputList();
+    cout << "list 2 is: " << endl;
+    list2->outputList();
+
+    List *mergeList = new List();
+#if 1
+    Node *newNode = mergeList->mergeListWithPoint(node1, node2);
+#else
+    Node *newNode = mergeList->mergeList(node1, node2);
+#endif
+    mergeList->head = newNode;
+    mergeList->outputList();
+    mergeList->destoryList();
 }
