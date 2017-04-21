@@ -1,4 +1,20 @@
 # C++学习笔记
 |文件||
 |-|-|
-|[linked_list.cpp](https://github.com/linconz/study_cpp/blob/master/linked_list.cpp)|C++链表实现<br>插入<br>删除<br>翻转<br>交换相邻两个位置的结点<br>查找结点<br>查找结点出现的位置<br>清空链表<br>销毁链表<br>在链表最后追加结点<br>检查链表是否有环<br>求链表长度<br>反向打印链表(递归,栈)<br>找到倒数的某个结点(递归,栈)<br>找到链表的中间结点<br>合并两个有序链表|
+|[linked_list.cpp](https://github.com/linconz/study_cpp/blob/master/linked_list.cpp)|C++链表实现<br>
+在链表的最后增加结点<br>
+在指定结点之前插入结点<br>
+删除结点<br>
+正序打印链表<br>
+倒序打印链表(递归,栈)<br>
+翻转链表<br>
+相邻两个位置翻转<br>
+清空链表<br>
+销毁链表<br>
+判断是否有环<br>
+求出链表中结点总数<br>
+查找借点位于链表中的位置<br>
+根据结点value查找结点<br>
+返回倒数的某个结点(while,指针)<br>
+获得链表中间的结点<br>
+合并两个有序链表(递归,指针)<br>|
