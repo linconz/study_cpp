@@ -7,6 +7,7 @@
 //
 
 #include <iostream>
+#include <stack>
 
 using namespace std;
 
@@ -49,6 +50,16 @@ public:
     void outputList();
 
     /**
+     使用递归方式从尾到头打印链表
+     */
+    void routputList(Node *prevNode);
+
+    /**
+     使用栈从尾到头打印链表
+     */
+    void routputListWithStack();
+
+    /**
      查找结点
      */
     Node *findNode(int value);
@@ -88,6 +99,13 @@ public:
      @return 链表是否有环: -1 无环
      */
     int hasLoop();
+
+    /**
+     求出链表中结点总数
+
+     @return 总数
+     */
+    int count();
 
     Node *getHead() {return head;};
 };
@@ -357,6 +375,56 @@ void List::outputList()
     cout << endl;
 }
 
+void List::routputList(Node *prevNode)
+{
+    if (prevNode == NULL) {
+        return;
+    }
+    this->routputList(prevNode->next);
+    cout << prevNode->value;
+    if (prevNode != head) {
+        cout << " <- ";
+    } else {
+        cout << endl;
+    }
+}
+
+void List::routputListWithStack()
+{
+    std::stack<Node *>s;
+    Node *findNode = head;
+    while (findNode != NULL) {
+        s.push(findNode);
+        findNode = findNode->next;
+    }
+    while (!s.empty()) {
+        findNode = s.top();
+        cout << findNode->value;
+        s.pop();
+        if (s.empty()) {
+            cout << endl;
+        } else {
+            cout << " <- ";
+        }
+    }
+}
+
+int List::count()
+{
+    if (head == NULL) {
+        return 0;
+    }
+    if (head->next == NULL) {
+        return 1;
+    }
+    Node *findNode = head;
+    int temp = 1;
+    while (findNode->next != NULL) {
+        findNode = findNode->next;
+        temp ++;
+    }
+    return temp;
+}
 
 int main(int argc, const char * argv[]) {
 
@@ -401,23 +469,31 @@ int main(int argc, const char * argv[]) {
         cout << "find node:" << findNode->value << endl;
     }
 
-    cout << "insert loop" << endl;
-    Node *temp = list->findNode(3);
-    temp->next = list->findNode(2);
-    cout << temp << endl;
+    /*
+     cout << "insert loop" << endl;
+     Node *temp = list->findNode(0);
+     temp->next = list->findNode(2);
+     ((Node *) list->findNode(2))->next = list->findNode(3);
+     cout << temp << endl;
 
-    int loopPos = list->hasLoop();
-    if (loopPos > -1) {
-        cout << "has loop, loop position is: " << loopPos << endl;
-    }
-/*
+     int loopPos = list->hasLoop();
+     if (loopPos > -1) {
+     cout << "has loop, loop position is: " << loopPos << endl;
+     }
+     */
+    list->outputList();
+    int count = list->count();
+    cout << "count is: " << count << endl;
+
+    cout << "reverse output list:" << endl;
+    list->routputList(list->head);
+
     cout << "clear list" << endl;
     list->clearList();
     list->outputList();
-
+    
     cout << "destory list" << endl;
     list->destoryList();
     list->outputList();
-*/
     return 0;
 }
