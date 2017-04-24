@@ -102,7 +102,7 @@ int main(int argc, const char * argv[]) {
     rightNode2->rightNode = rightNode4;
 
     List *list = new List();
-    list->outputList(nodeHead);
+    list->outputListWithPreorderTraversal(nodeHead);
 
     return 0;
 }
