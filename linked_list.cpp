@@ -108,6 +108,15 @@ public:
     Node *findNode(int value);
 
     /**
+     根据位置查找结点
+
+     @param position 位置
+
+     @return Node结点
+     */
+    Node *findNodeAtPosition(int position);
+
+    /**
      使用while的方式返回倒数的某个结点
 
      @param position 位置
@@ -153,6 +162,17 @@ public:
      @return 返回合并后的链表
      */
     Node* mergeListWithPoint(Node *list1, Node *list2);
+
+    /**
+     判断两个链表是否相交
+
+     @param list1 链表1
+     @param list2 链表2
+
+     @return 返回相交的结点,如果不相交返回NULL
+     */
+    Node* isIntresectList(List *list1, List *list2);
+
 };
 
 void List::addNode(int value)
@@ -460,6 +480,24 @@ Node* List::findNode(int value)
     return NULL;
 }
 
+Node* List::findNodeAtPosition(int position)
+{
+    Node *findNode = NULL;
+    if (head == NULL) {
+        return NULL;
+    }
+    int tempPosition = 0;
+    findNode = head;
+    while (findNode != NULL) {
+        if (tempPosition == position) {
+            return findNode;
+        }
+        findNode = findNode->next;
+        tempPosition ++;
+    }
+    return NULL;
+}
+
 Node* List::findPositionAtBackward(unsigned int position)
 {
     if (head == NULL || head->next == NULL) {
@@ -604,7 +642,36 @@ Node* List::mergeListWithPoint(Node *list1, Node *list2)
     return newListHead;
 }
 
+Node* List::isIntresectList(List *list1, List *list2)
+{
+    // 比较长度
+    // 如果两个链表长度不同,对齐他们
+    int len1 = list1->count();
+    int len2 = list2->count();
+    if (len1 > len2) {
+        for (int i=0; i<len1 - len2; i++) {
+            list1->head = list1->head->next;
+        }
+    } else if (len1 < len2) {
+        for (int i=0; i<len2 - len1; i++) {
+            list2->head = list2->head->next;
+        }
+    }
+
+    // 两个指针同时向后移动,如果两个head相同了,代表到达了相交的结点
+    while (list1->head != NULL) {
+        if (list1->head == list2->head) {
+            return list1->head;
+        }
+        list1->head = list1->head->next;
+        list2->head = list2->head->next;
+    }
+
+    return NULL;
+}
+
 void mergeLinkedLists();
+void intersectList();
 
 int main(int argc, const char * argv[]) {
 
@@ -668,7 +735,7 @@ int main(int argc, const char * argv[]) {
     cout << "reverse output list:" << endl;
     list->routputList(list->head);
 
-//    list->deleteNode(233);
+    //    list->deleteNode(233);
     cout << "find backward position" << endl;
     list->outputList();
     int findPosition = 5;
@@ -692,12 +759,14 @@ int main(int argc, const char * argv[]) {
     cout << "clear list" << endl;
     list->clearList();
     list->outputList();
-    
+
     cout << "destory list" << endl;
     list->destoryList();
     list->outputList();
 
     mergeLinkedLists();
+    intersectList();
+    intersectListWithLoop();
     return 0;
 }
 
@@ -745,4 +814,53 @@ void mergeLinkedLists()
     mergeList->head = newNode;
     mergeList->outputList();
     mergeList->destoryList();
+}
+
+/**
+ 判断两个链表是否相交
+ */
+void intersectList()
+{
+    List *list1 = new List();
+    Node *list1Node1 = new(Node);
+    list1Node1->value = 1;
+    Node *list1Node2 = new(Node);
+    list1Node2->value = 2;
+    list1Node1->next = list1Node2;
+//    Node *list1Node3 = new(Node);
+//    list1Node3->value = 3;
+//    list1Node2->next = list1Node3;
+    list1->head = list1Node1;
+
+    List *list2 = new List();
+    Node *list2Node1 = new(Node);
+    list2Node1->value = 1;
+    Node *list2Node2 = new(Node);
+    list2Node2->value = 2;
+    list2Node1->next = list2Node2;
+    Node *list2Node3 = new(Node);
+    list2Node3->value = 3;
+    list2Node2->next = list2Node3;
+    Node *list2Node4 = new(Node);
+    list2Node4->value = 4;
+    list2Node3->next = list2Node4;
+    Node *list2Node5 = new(Node);
+    list2Node5->value = 5;
+    list2Node4->next = list2Node5;
+    Node *list2Node6 = new(Node);
+    list2Node6->value = 6;
+    list2Node5->next = list2Node6;
+    list2Node6->next = NULL;
+    list2->head = list2Node1;
+
+    // 相交点
+    list1Node2->next = list2Node4;
+
+    List *newList = new List();
+    Node *intersectNode = newList->isIntresectList(list1, list2);
+    if (intersectNode != NULL) {
+        cout << "相交点的value是: " << intersectNode->value << endl;
+    } else {
+        cout << "没有找到相交点" << endl;
+    }
 }

@@ -3,7 +3,7 @@
   <tbody>
     <tr><td colspan="3">文件列表</td></tr>
     <tr>
-      <td rowspan="20"><a href="https://github.com/linconz/study_cpp/blob/master/linked_list.cpp">linked_list.cpp</a></td>
+      <td rowspan="22"><a href="https://github.com/linconz/study_cpp/blob/master/linked_list.cpp">linked_list.cpp</a></td>
       <td colspan="2">链表相关操作</td>
     </tr>
     <tr>
@@ -81,6 +81,14 @@
     <tr>
       <td>mergeListWithPoint</td>
       <td>使用两个指针方式合并两个有序链表</td>
+    </tr>
+    <tr>
+      <td>findNodeAtPosition</td>
+      <td>根据位置找到结点</td>
+    </tr>
+    <tr>
+      <td>isIntresectList</td>
+      <td>判断两个无环链表是否相交</td>
     </tr>
   </tbody>
 </table>
