@@ -5,14 +5,24 @@
         <tr>
             <td>count</td>
             <td>获得二叉树的结点总数</td>
+        </tr>
+        <tr>
             <td>leaf</td>
             <td>获得二叉树宽度</td>
+        </tr>
+        <tr>
             <td>deep</td>
             <td>获得二叉树深度</td>
+        </tr>
+        <tr>
             <td>outputListWithPreorderTraversal</td>
             <td>先序遍历</td>
+        </tr>
+        <tr>
             <td>outputListWithInorderTraversal</td>
             <td>中序遍历</td>
+        </tr>
+        <tr>
             <td>outputListWithPostorderTraversal</td>
             <td>后序遍历</td>
         </tr>
