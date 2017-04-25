@@ -1,5 +1,5 @@
 //
-//  binary_tree.cpp
+//  linked_list.cpp
 //  TestCPP
 //
 //  Created by zhang on 2017/1/16.
@@ -22,13 +22,82 @@ public:
     BinaryTreeNode *head;
 
     /**
+     计算二叉树总共有多少个结点
+
+     @param node 头结点
+
+     @return 结点总数
+     */
+    int count(BinaryTreeNode *node);
+
+    /**
+     计算二叉树深度
+
+     @param node 头结点
+
+     @return 结点总数
+     */
+    int deep(BinaryTreeNode *node);
+
+    /**
+     计算二叉树宽度
+
+     @param node 头结点
+
+     @return 叶子结点最宽数
+     */
+    int leaf(BinaryTreeNode *node);
+
+    /**
      先序遍历
      先遍历左孩子再遍历右孩子
 
-     @param node 二叉树结点
+     @param node 二叉树头结点
      */
     void outputListWithPreorderTraversal(BinaryTreeNode *node);
+
+    /**
+     中序遍历
+
+     @param node 二叉树头结点
+     */
+    void outputListWithInorderTraversal(BinaryTreeNode *node);
+
+    /**
+     后序遍历
+
+     @param node 二叉树头结点
+     */
+    void outputListWithPostorderTraversal(BinaryTreeNode *node);
 };
+
+int List::count(BinaryTreeNode *node)
+{
+    if (node == NULL)
+        return 0;
+    return this->count(node->leftNode) + this->count(node->rightNode) + 1;
+}
+
+int List::deep(BinaryTreeNode *node)
+{
+    if (node == NULL) {
+        return 0;
+    }
+    int ldeep = this->deep(node->leftNode);
+    int rdeep = this->deep(node->rightNode);
+    return ( ldeep > rdeep ) ? (ldeep + 1) : (rdeep + 1);
+}
+
+int List::leaf(BinaryTreeNode *node)
+{
+    if (node == NULL) {
+        return 0;
+    }
+    if (node->leftNode == NULL && node->rightNode == NULL){
+        return 1;
+    }
+    return this->leaf(node->leftNode) + this->leaf(node->rightNode);
+}
 
 void List::outputListWithPreorderTraversal(BinaryTreeNode *node)
 {
@@ -42,6 +111,26 @@ void List::outputListWithPreorderTraversal(BinaryTreeNode *node)
     if (node->rightNode != NULL) {
         this->outputListWithPreorderTraversal(node->rightNode);
     }
+}
+
+void List::outputListWithInorderTraversal(BinaryTreeNode *node)
+{
+    if (node == NULL) {
+        return;
+    }
+    this->outputListWithInorderTraversal(node->leftNode);
+    cout << node->value << endl;
+    this->outputListWithInorderTraversal(node->rightNode);
+}
+
+void List::outputListWithPostorderTraversal(BinaryTreeNode *node)
+{
+    if (node == NULL) {
+        return;
+    }
+    this->outputListWithPostorderTraversal(node->leftNode);
+    this->outputListWithPostorderTraversal(node->rightNode);
+    cout << node->value << endl;
 }
 
 int main(int argc, const char * argv[]) {
@@ -86,6 +175,11 @@ int main(int argc, const char * argv[]) {
     rightNode4->leftNode = NULL;
     rightNode4->rightNode = NULL;
 
+    BinaryTreeNode *rightNode5 = new(BinaryTreeNode);
+    rightNode5->value = 25;
+    rightNode5->leftNode = NULL;
+    rightNode5->rightNode = NULL;
+
     // nodeHead = 0
     nodeHead->leftNode = leftNode1;
     nodeHead->rightNode = rightNode1;
@@ -101,9 +195,24 @@ int main(int argc, const char * argv[]) {
     // rightNode2 = 22
     rightNode2->rightNode = rightNode4;
 
+    // rightNode3 = 23
+    rightNode3->rightNode = rightNode5;
+
     List *list = new List();
+    cout << "先序遍历:" << endl;
     list->outputListWithPreorderTraversal(nodeHead);
 
+    cout << "中序遍历" << endl;
+    list->outputListWithInorderTraversal(nodeHead);
+
+    cout << "后序遍历" << endl;
+    list->outputListWithPostorderTraversal(nodeHead);
+
+    int count = list->count(nodeHead);
+    cout << "总结点数:" << count << endl;
+    int deep = list->deep(nodeHead);
+    cout << "结点深度:" << deep << endl;
+    int leaf = list->leaf(nodeHead);
+    cout << "leaf:" << leaf << endl;
     return 0;
 }
-
