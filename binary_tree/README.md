@@ -26,5 +26,9 @@
             <td>outputListWithPostorderTraversal</td>
             <td>后序遍历</td>
         </tr>
+        <tr>
+            <td>outputListWithLevelTraverse</td>
+            <td>分层遍历</td>
+        </tr>
     </tbody>
 </table>

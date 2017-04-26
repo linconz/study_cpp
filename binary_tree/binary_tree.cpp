@@ -7,6 +7,7 @@
 //
 
 #include <iostream>
+#include <queue>
 
 using namespace std;
 
@@ -69,6 +70,14 @@ public:
      @param node 二叉树头结点
      */
     void outputListWithPostorderTraversal(BinaryTreeNode *node);
+
+    /**
+     分层遍历二叉树
+     按层从上往下 每层从左到右
+
+     @param node 二叉树头结点
+     */
+    void outputListWithLevelTraverse(BinaryTreeNode *node);
 };
 
 int List::count(BinaryTreeNode *node)
@@ -131,6 +140,26 @@ void List::outputListWithPostorderTraversal(BinaryTreeNode *node)
     this->outputListWithPostorderTraversal(node->leftNode);
     this->outputListWithPostorderTraversal(node->rightNode);
     cout << node->value << endl;
+}
+
+void List::outputListWithLevelTraverse(BinaryTreeNode *node)
+{
+    if (node == NULL) {
+        return;
+    }
+    queue<BinaryTreeNode *> q;
+    q.push(node);
+    while (!q.empty()) {
+        BinaryTreeNode *findNode = q.front();
+        q.pop();
+        cout << findNode->value << endl;
+        if (findNode->leftNode != NULL) {
+            q.push(findNode->leftNode);
+        }
+        if (findNode->rightNode != NULL) {
+            q.push(findNode->rightNode);
+        }
+    }
 }
 
 int main(int argc, const char * argv[]) {
@@ -207,6 +236,9 @@ int main(int argc, const char * argv[]) {
 
     cout << "后序遍历" << endl;
     list->outputListWithPostorderTraversal(nodeHead);
+
+    cout << "分层遍历" << endl;
+    list->outputListWithLevelTraverse(nodeHead);
 
     int count = list->count(nodeHead);
     cout << "总结点数:" << count << endl;
