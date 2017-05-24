@@ -1,0 +1,43 @@
+# C++ 顺序表相关操作
+<a href="https://github.com/linconz/study_cpp/blob/master/linear_list/linear_list.cpp">linear_list.cpp</a>
+<table>
+  <tbody>
+    <tr>
+      <td>initList</td>
+      <td>初始化顺序表</td>
+    </tr>
+    <tr>
+      <td>insertAtFirst</td>
+      <td>在顺序表头部插入元素</td>
+    </tr>
+    <tr>
+      <td>insertAtList</td>
+      <td>在顺序表末尾插入元素</td>
+    </tr>
+    <tr>
+      <td>insertAtPosition</td>
+      <td>在顺序表的指定位置插入元素</td>
+    </tr>
+    <tr>
+      <td>removeDataAtPosition</td>
+      <td>在顺序表的指定位置移除元素</td>
+    </tr>
+    <tr>
+      <td>isEmpty</td>
+      <td>检查顺序表是否空的</td>
+    </tr>
+    <tr>
+      <td>traverseList</td>
+      <td>遍历输出顺序表</td>
+    </tr>
+    <tr>
+      <td>reverseList</td>
+      <td>翻转顺序表</td>
+    </tr>
+    <tr>
+      <td>findDataInList</td>
+      <td>在顺序表中查找元素</td>
+    </tr>
+  </tbody>
+</table>
+
