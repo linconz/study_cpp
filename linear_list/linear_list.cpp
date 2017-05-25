@@ -16,17 +16,6 @@ typedef struct {
     int listsize;
 } SeqList;
 
-void mallocList(SeqList *l)
-{
-    DataType *newbase;
-    newbase = (DataType *)realloc(l->data,
-                                  (l->listsize + MAXSIZE) * sizeof(DataType));
-    if (!newbase)
-        exit(OVERFLOW);
-    l->data = newbase;
-    l->listsize += MAXSIZE;
-}
-
 /**
  初始化线表
 
@@ -40,6 +29,17 @@ void initList(SeqList *l)
     }
     l->length = 0;
     l->listsize = MAXSIZE;
+}
+
+void mallocList(SeqList *l)
+{
+    DataType *newbase;
+    newbase = (DataType *)realloc(l->data,
+                                  (l->listsize + MAXSIZE) * sizeof(DataType));
+    if (!newbase)
+        exit(OVERFLOW);
+    l->data = newbase;
+    l->listsize += MAXSIZE;
 }
 
 /**
@@ -66,7 +66,7 @@ void insertAtFirst(SeqList * l, DataType newData)
  @param l list
  @param newData data
  */
-void insertAtList(SeqList *l, DataType newData)
+void insertAtLast(SeqList *l, DataType newData)
 {
     if (l->length >= l->listsize)
         mallocList(l);
@@ -164,6 +164,13 @@ void reverseList(SeqList *l)
     }
 }
 
+/**
+ 在顺序表中查找元素第一次出现的位置
+
+ @param l list
+ @param data data
+ @return position
+ */
 int findDataInList(SeqList *l, DataType data)
 {
     for (int i=0; i<l->length; i++) {
@@ -172,6 +179,53 @@ int findDataInList(SeqList *l, DataType data)
         }
     }
     return OUTOFRANGE;
+}
+
+/**
+ 在顺序表中通过位置查找元素
+
+ @param l list
+ @param position position
+ @return data
+ */
+DataType findDataWithPositionInList(SeqList *l, int position)
+{
+    if (!l->data) {
+        exit(OVERFLOW);
+    }
+    for (int i=0; i<l->length; i++) {
+        if (i == position) {
+            return l->data[i];
+        }
+    }
+    return -1;
+}
+
+/**
+ 合并顺序表B中的元素到顺序表A中,并且删掉重复的元素
+
+ @param la list a
+ @param lb list b
+ */
+void unionListBToA(SeqList *la, SeqList *lb)
+{
+    int listBLength = lb->length;
+    DataType data;
+    int plusLength = la->length;
+    for (int i=0; i<listBLength; i++) {
+        data = lb->data[i];
+        int positionB = findDataInList(lb, data);
+        if (positionB != OUTOFRANGE) {
+            // 找到位置
+            int positionA = findDataInList(la, data);
+            if (positionA == OUTOFRANGE) {
+                // 顺序表A中不存在, 插入数据
+                insertAtLast(la, data);
+                plusLength += 1;
+            }
+        }
+    }
+    la->length = plusLength;
 }
 
 /**
@@ -184,7 +238,43 @@ void mergeListBToA(SeqList *la, SeqList *lb)
 {
     la->listsize = la->length + lb->length;
     for (int i=0; i<lb->length; i++) {
-        insertAtList(la, lb->data[i]);
+        insertAtLast(la, lb->data[i]);
+    }
+}
+
+/**
+ 按照两个有序顺序表合并成一个有序顺序表
+
+ @param la list a
+ @param lb list b
+ @param lc list c
+ */
+void mergeListAAndListBToListC(SeqList *la, SeqList *lb, SeqList *lc)
+{
+    initList(lc);
+    int listaLength = la->length;
+    int listbLength = lb->length;
+    int positionA = 0, positionB = 0;
+    while (positionA < listaLength && positionB < listbLength) {
+        DataType dataA = findDataWithPositionInList(la, positionA);
+        DataType dataB = findDataWithPositionInList(lb, positionB);
+        if (dataA <= dataB) {
+            insertAtLast(lc, dataA);
+            positionA++;
+        } else {
+            insertAtLast(lc, dataB);
+            positionB++;
+        }
+    }
+    while (positionA < listaLength) {
+        DataType dataA = findDataWithPositionInList(la, positionA);
+        insertAtLast(lc, dataA);
+        positionA++;
+    }
+    while (positionB < listbLength) {
+        DataType dataB = findDataWithPositionInList(lb, positionB);
+        insertAtLast(lc, dataB);
+        positionB++;
     }
 }
 
@@ -213,7 +303,7 @@ int main(int argc, char* argv[])
     cout << "删除的元素值是" << removeValue << endl;
 
     cout << "在末尾追加 777" << endl;
-    insertAtList(&list, 777);
+    insertAtLast(&list, 777);
     traverseList(&list);
 
     cout << "在头增加 888" << endl;
@@ -245,12 +335,64 @@ int main(int argc, char* argv[])
     initList(&listb);
     for (int i=6; i<10; i++) {
         DataType data = i;
-        insertAtList(&listb, data);
+        insertAtLast(&listb, data);
     }
     traverseList(&listb);
     cout << "合并顺序表b到顺序表a之后" << endl;
     mergeListBToA(&list, &listb);
     traverseList(&list);
+
+    free(list.data);
+    list.length = 0;
+    list.listsize = 0;
+    free(listb.data);
+    listb.length = 0;
+    listb.listsize = 0;
+
+    cout << "合并顺序表B到顺序表A中,并且删掉重复的元素" << endl;
+    initList(&list);
+    for (int i=0; i<6; i++) {
+        insertAtLast(&list, i);
+    }
+    traverseList(&list);
+
+    initList(&listb);
+    for (int i=4; i<9; i++) {
+        insertAtLast(&listb, i);
+    }
+    traverseList(&listb);
+    unionListBToA(&list, &listb);
+    traverseList(&list);
+
+    free(list.data);
+    list.length = 0;
+    list.listsize = 0;
+    free(listb.data);
+    listb.length = 0;
+    listb.listsize = 0;
+
+    cout << "合并顺序表A和顺序表B到顺序表C,并且按照原顺序排序:" << endl;
+    initList(&list);
+    list.data[0] = 2;
+    list.data[1] = 4;
+    list.data[2] = 6;
+    list.data[3] = 8;
+    list.data[4] = 10;
+    list.length = 5;
+    list.listsize = MAXSIZE;
+
+    initList(&listb);
+    listb.data[0] = 6;
+    listb.data[1] = 7;
+    listb.data[2] = 8;
+    listb.data[3] = 10;
+    listb.data[4] = 11;
+    listb.data[5] = 14;
+    listb.length = 6;
+    listb.listsize = 6;
+    SeqList listc;
+    mergeListAAndListBToListC(&list, &listb, &listc);
+    traverseList(&listc);
+    
     return 0;
 }
-

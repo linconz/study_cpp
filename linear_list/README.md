@@ -11,7 +11,7 @@
       <td>在顺序表头部插入元素</td>
     </tr>
     <tr>
-      <td>insertAtList</td>
+      <td>insertAtLast</td>
       <td>在顺序表末尾插入元素</td>
     </tr>
     <tr>
@@ -38,6 +38,21 @@
       <td>findDataInList</td>
       <td>在顺序表中查找元素</td>
     </tr>
+    <tr>
+      <td>findDataWithPositionInList</td>
+      <td>在顺序表中通过位置查找元素</td>
+    </tr>
+    <tr>
+      <td>unionListBToA</td>
+      <td>合并顺序表B中的元素到顺序表A中,并且删掉重复的元素</td>
+    </tr>
+    <tr>
+      <td>mergeListAAndListBToListC</td>
+      <td>按照两个有序顺序表的顺序合并成一个有序顺序表</td>
+    </tr>
+    <tr>
+      <td>mergeListBToA</td>
+      <td>把顺序表B合并到顺序表A</td>
+    </tr>
   </tbody>
 </table>
-
