@@ -78,6 +78,24 @@ public:
      @param node 二叉树头结点
      */
     void outputListWithLevelTraverse(BinaryTreeNode *node);
+
+    /**
+     获取第k层的节点数量
+
+     @param node 根节点
+     @param k 层数
+     @return size_t 节点数量
+     */
+    size_t getLevelSize(BinaryTreeNode *node, size_t k);
+
+    /**
+     查找二叉树的某个节点的value
+
+     @param node 根节点
+     @param value 值
+     @return bool 是否存在
+     */
+    bool findBinaryTreeNode(BinaryTreeNode *node, int value);
 };
 
 int List::count(BinaryTreeNode *node)
@@ -160,6 +178,44 @@ void List::outputListWithLevelTraverse(BinaryTreeNode *node)
             q.push(findNode->rightNode);
         }
     }
+}
+
+size_t List::getLevelSize(BinaryTreeNode *node, size_t k)
+{
+	if (k <= 0) {
+		return 0;
+	}
+	
+	size_t count = 0;
+	if (NULL == node) {
+		return 0;
+	}
+	if (k == 1) {
+		count ++;
+	} else {
+		count = getLevelSize(node->leftNode, k-1) + getLevelSize(node->rightNode, k-1);
+	}
+	
+	return count;
+}
+
+bool List::findBinaryTreeNode(BinaryTreeNode *node, int value)
+{
+    bool result = false;
+    if (NULL == node) {
+        result = false;
+    } else if (node->value == value) {
+        result = true;
+    } else {
+        if (node->leftNode && !result) {
+            result = this->findBinaryTreeNode(node->leftNode, value);
+        }
+        if (node->rightNode && !result) {
+            result = this->findBinaryTreeNode(node->rightNode, value);
+        }
+    }
+
+    return result;
 }
 
 int main(int argc, const char * argv[]) {
@@ -246,5 +302,12 @@ int main(int argc, const char * argv[]) {
     cout << "结点深度:" << deep << endl;
     int leaf = list->leaf(nodeHead);
     cout << "leaf:" << leaf << endl;
+    int level = 3;
+	int levelSize = list->getLevelSize(nodeHead, level);
+	cout << "第" << level << "层的节点个数是:" << levelSize << endl;
+
+    int findValue = 4;
+    bool isInList = list->findBinaryTreeNode(nodeHead, findValue);
+    cout << "值" << findValue << (isInList ? "存在" : "不存在") << endl;
     return 0;
 }
