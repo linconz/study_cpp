@@ -8,6 +8,7 @@
 
 #include <iostream>
 #include <queue>
+#include <stack>
 
 using namespace std;
 
@@ -58,11 +59,25 @@ public:
     void outputListWithPreorderTraversal(BinaryTreeNode *node);
 
     /**
+     先序遍历迭代版
+
+     @param node head node
+     */
+    void outputListWithPreorderIteration(BinaryTreeNode *node);
+
+    /**
      中序遍历
 
      @param node 二叉树头结点
      */
     void outputListWithInorderTraversal(BinaryTreeNode *node);
+
+    /**
+     中序遍历迭代版
+
+     @param node head node
+     */
+    void outputListWithInorderIteration(BinaryTreeNode *node);
 
     /**
      后序遍历
@@ -72,12 +87,37 @@ public:
     void outputListWithPostorderTraversal(BinaryTreeNode *node);
 
     /**
+     后续遍历迭代版
+
+     @param node head node
+     */
+    void outputListWithPostorderIteration(BinaryTreeNode *node);
+
+    /**
      分层遍历二叉树
      按层从上往下 每层从左到右
 
      @param node 二叉树头结点
      */
     void outputListWithLevelTraverse(BinaryTreeNode *node);
+
+    /**
+     获取第k层的节点数量
+
+     @param node 根节点
+     @param k 层数
+     @return size_t 节点数量
+     */
+    size_t getLevelSize(BinaryTreeNode *node, size_t k);
+
+    /**
+     查找二叉树的某个节点的value
+
+     @param node 根节点
+     @param value 值
+     @return bool 是否存在
+     */
+    bool findBinaryTreeNode(BinaryTreeNode *node, int value);
 };
 
 int List::count(BinaryTreeNode *node)
@@ -113,7 +153,7 @@ void List::outputListWithPreorderTraversal(BinaryTreeNode *node)
     if (node == NULL) {
         return;
     }
-    cout << node->value << endl;
+    cout << node->value << " ";
     if (node->leftNode != NULL) {
         this->outputListWithPreorderTraversal(node->leftNode);
     }
@@ -122,14 +162,56 @@ void List::outputListWithPreorderTraversal(BinaryTreeNode *node)
     }
 }
 
+void List::outputListWithPreorderIteration(BinaryTreeNode *node)
+{
+    if (node == NULL) {
+        return;
+    }
+    stack<BinaryTreeNode *> s;
+    BinaryTreeNode *temp = node;
+    while (temp || !s.empty()) {
+        if (temp) {
+            cout << temp->value << " ";
+            s.push(temp);
+            temp = temp->leftNode;
+        } else {
+            temp = s.top();
+            s.pop();
+            temp = temp->rightNode;
+        }
+    }
+    cout << endl;
+}
+
 void List::outputListWithInorderTraversal(BinaryTreeNode *node)
 {
     if (node == NULL) {
         return;
     }
     this->outputListWithInorderTraversal(node->leftNode);
-    cout << node->value << endl;
+    cout << node->value << " ";
     this->outputListWithInorderTraversal(node->rightNode);
+}
+
+void List::outputListWithInorderIteration(BinaryTreeNode *node)
+{
+    if (node == NULL) {
+        return;
+    }
+    stack<BinaryTreeNode *> s;
+    BinaryTreeNode *temp = node;
+    while (temp || !s.empty()) {
+        if (temp) {
+            s.push(temp);
+            temp = temp->leftNode;
+        } else {
+            temp = s.top();
+            s.pop();
+            cout << temp->value << " ";
+            temp = temp->rightNode;
+        }
+    }
+    cout << endl;
 }
 
 void List::outputListWithPostorderTraversal(BinaryTreeNode *node)
@@ -139,7 +221,33 @@ void List::outputListWithPostorderTraversal(BinaryTreeNode *node)
     }
     this->outputListWithPostorderTraversal(node->leftNode);
     this->outputListWithPostorderTraversal(node->rightNode);
-    cout << node->value << endl;
+    cout << node->value << " ";
+}
+
+void List::outputListWithPostorderIteration(BinaryTreeNode *node)
+{
+    if (node == NULL) {
+        return;
+    }
+    stack<BinaryTreeNode *> s;
+    s.push(node);
+    BinaryTreeNode *temp = NULL;
+    while (!s.empty()) {
+        temp = s.top();
+        if (temp->leftNode == NULL && temp->rightNode == NULL) {
+            cout << temp->value << " ";
+            s.pop();
+        } else {
+            if (temp->rightNode) {
+                s.push(temp->rightNode);
+                temp->rightNode = NULL;
+            }
+            if (temp->leftNode) {
+                s.push(temp->leftNode);
+                temp->leftNode = NULL;
+            }
+        }
+    }
 }
 
 void List::outputListWithLevelTraverse(BinaryTreeNode *node)
@@ -152,7 +260,7 @@ void List::outputListWithLevelTraverse(BinaryTreeNode *node)
     while (!q.empty()) {
         BinaryTreeNode *findNode = q.front();
         q.pop();
-        cout << findNode->value << endl;
+        cout << findNode->value << " ";
         if (findNode->leftNode != NULL) {
             q.push(findNode->leftNode);
         }
@@ -160,6 +268,44 @@ void List::outputListWithLevelTraverse(BinaryTreeNode *node)
             q.push(findNode->rightNode);
         }
     }
+}
+
+size_t List::getLevelSize(BinaryTreeNode *node, size_t k)
+{
+	if (k <= 0) {
+		return 0;
+	}
+	
+	size_t count = 0;
+	if (NULL == node) {
+		return 0;
+	}
+	if (k == 1) {
+		count ++;
+	} else {
+		count = getLevelSize(node->leftNode, k-1) + getLevelSize(node->rightNode, k-1);
+	}
+	
+	return count;
+}
+
+bool List::findBinaryTreeNode(BinaryTreeNode *node, int value)
+{
+    bool result = false;
+    if (NULL == node) {
+        result = false;
+    } else if (node->value == value) {
+        result = true;
+    } else {
+        if (node->leftNode && !result) {
+            result = this->findBinaryTreeNode(node->leftNode, value);
+        }
+        if (node->rightNode && !result) {
+            result = this->findBinaryTreeNode(node->rightNode, value);
+        }
+    }
+
+    return result;
 }
 
 int main(int argc, const char * argv[]) {
@@ -230,12 +376,21 @@ int main(int argc, const char * argv[]) {
     List *list = new List();
     cout << "先序遍历:" << endl;
     list->outputListWithPreorderTraversal(nodeHead);
+    cout << endl;
+    cout << "先序遍历迭代方式: " << endl;
+    list->outputListWithPreorderIteration(nodeHead);
 
     cout << "中序遍历" << endl;
     list->outputListWithInorderTraversal(nodeHead);
+    cout << endl;
+    cout << "中序遍历迭代方式: " << endl;
+    list->outputListWithInorderIteration(nodeHead);
 
     cout << "后序遍历" << endl;
     list->outputListWithPostorderTraversal(nodeHead);
+    cout << endl;
+    cout << "后序遍历迭代方式: " << endl;
+    list->outputListWithPostorderIteration(nodeHead);
 
     cout << "分层遍历" << endl;
     list->outputListWithLevelTraverse(nodeHead);
@@ -246,5 +401,12 @@ int main(int argc, const char * argv[]) {
     cout << "结点深度:" << deep << endl;
     int leaf = list->leaf(nodeHead);
     cout << "leaf:" << leaf << endl;
+    int level = 3;
+	int levelSize = list->getLevelSize(nodeHead, level);
+	cout << "第" << level << "层的节点个数是:" << levelSize << endl;
+
+    int findValue = 4;
+    bool isInList = list->findBinaryTreeNode(nodeHead, findValue);
+    cout << "值" << findValue << (isInList ? "存在" : "不存在") << endl;
     return 0;
 }
